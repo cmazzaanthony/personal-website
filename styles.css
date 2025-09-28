@@ -1,0 +1,53 @@
+/* Shared typography and layout */
+body {
+    margin: 6rem auto 2rem;
+    max-width: 75ch;
+    line-height: 1.5;
+    font-size: 17px;
+    color: #1a1a1a;
+    background: #fdfdfd;
+    padding: 0 1rem;
+    text-rendering: optimizeLegibility;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    font-variant-ligatures: common-ligatures;
+    hyphens: auto;
+}
+
+h1, h2, h3 {
+    line-height: 1.2;
+    margin-top: 2rem;
+    margin-bottom: 1rem;
+    font-weight: 500;
+    color: #333;
+}
+
+h1 { font-size: 1.75rem; }
+h2 { font-size: 1.35rem; }
+h3 { font-size: 1.1rem; }
+
+p {
+    margin: 0 0 1rem 0;
+}
+
+ul, ol {
+    margin: 0 0 1rem 1.25rem;
+}
+
+nav {
+    margin: 1rem 0 2rem 0;
+}
+
+time {
+    color: #555;
+    font-size: 0.95em;
+}
+
+article {
+    margin-top: 2rem;
+}
+
+a, a:visited, a:hover, a:active, a:focus {
+    color: inherit;
+}
+

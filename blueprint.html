@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <title>Blueprint</title>
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/latex.css@1.1.1/dist/latex.min.css">
+        <link rel="stylesheet" href="styles.css">
+        <script>
+            window.MathJax = {
+                tex: {
+                    inlineMath: [["$","$"], ["\\(","\\)"]],
+                    displayMath: [["$$","$$"], ["\\[","\\]"]]
+                },
+                options: {
+                    skipHtmlTags: ["script","noscript","style","textarea","pre","code"]
+                }
+            };
+        </script>
+        <script defer src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js"></script>
+    </head>
+    <body>
+        <main>
+            <div id="post"></div>
+            <script type="text/markdown" id="post-md">
+# Blueprint
+
+July 16, 2023
+
+If you're working with me, it's important to know what I value and what I find frustrating. 
+This document will give you a head start in understanding how I operate.
+
+## Trust is the foundation of strong relationships - and it begins with keeping your word.
+Always follow through on your commitments. Your credibility is essential, and your word is your bond. Consistently delivering on your promises builds trust and strengthens relationships.
+
+For example, let's say you're responsible for creating a data model. When you submit your first pull request, expect me to scrutinize the code and ask questions. However, if the model is well-built and meets its intended purpose, I'll be less meticulous in my review of your subsequent pull requests. As trust grows within the team, it allows everyone to concentrate on their respective tasks without having to spend excessive time reviewing each other's work.
+
+## I value persistence
+Obstacles are a part of everyday life and can hinder progress towards your goals. Your response to these obstacles defines your character. Instead of giving up or making excuses, take action and find solutions. Approach your manager with a solution-oriented mindset. Identify the obstacle and present five potential solutions to overcome it. This approach will not only demonstrate your problem-solving skills but also showcase your determination to succeed. As Calvin Coolidge once said, “Nothing in this world can take the place of good old persistence. Talent won’t. Nothing’s more common than unsuccessful men with talent. Genius won’t. Unrecognized genius is practically a cliche. Education won’t. The world is full of educated fools. Persistence and determination alone are all powerful.” Remember this when faced with obstacles and keep pushing forward.
+
+## Urgency and Energy are crucial
+When it comes to productivity, Urgency and Energy are crucial. A scene from Rocky 3 comes to mind, where Apollo Creed is training Rocky. Rocky is struggling and promises to do better tomorrow. Apollo’s response is a wake-up call: “There is no tomorrow! There is no tomorrow Rock!” While this may seem extreme, the message is clear.
+
+Procrastination and missed deadlines can be demotivating for a team. Without a sense of urgency, progress can come to a standstill. Operating as if time is infinite is a recipe for failure. To achieve success, it’s important to prioritize tasks and work with a sense of urgency.
+
+## Do not sugarcoat anything
+When communicating, it's important to be direct and honest. Avoid sugar coating your message, even if it may be difficult to hear. By being straightforward, you can earn the respect of others, even if they don’t agree with you.
+
+## I value simplicity
+Have you ever heard the quote, "If you can't explain it simply, you don't understand it well enough," attributed to Albert Einstein? It's a reminder to avoid over-complicating things, especially in technology. Your ideas should be valued by how easily they can be understood and applied by others. Keep it simple and watch your ideas spread like wildfire.
+
+## I always default to action
+When faced with a decision, it's important to default to action. As the saying goes, "The risk of a wrong decision is preferable to the terror of indecision." Don't get caught up in endless discussions and debates, as this can lead to delays and missed opportunities. Instead, make a decision and be willing to accept the possibility of failure. Remember that failure is not the end, but rather an opportunity to learn and try again. By defaulting to action, you'll be on your way to achieving better outcomes.
+
+## Complacency is the silent killer
+If a day goes by and I haven't learned something new or overcome any obstacles, I feel deeply unfulfilled. To improve daily, it's important to embrace learning and failure. Without these, we can feel unfulfilled. For those who thrive on challenge, friction is key. Remember, discomfort can lead to growth. And, of course, discipline is essential for true freedom.
+
+## I do not believe in zero sum games and I don't want to work in an environment that promotes them
+It's important to avoid promoting zero sum games in the workplace. These games operate on the principle that for one person to win, another must lose. Instead, we should strive for a win-win situation where everyone can benefit. While it may not always be possible for everyone to win simultaneously, it's important to focus on long-term success for all involved.
+
+## I have a competitive spirit.
+If you want to succeed in a team environment, it's important to have a competitive spirit. Being ambitious and eager is great, but it's crucial to remember that the team and mission come first. When a teammate delivers exceptional work, use it as motivation to improve your own skills and performance. By pushing each other to be better, the entire team can achieve success.
+
+## Mistakes are ok, as long as you own them.
+Making mistakes is a natural part of life, but it's essential to take ownership of them. Acknowledging and accepting responsibility for our mistakes is crucial for personal growth and progress. When a mistake occurs, it's important to analyze why it happened and develop a plan to prevent it from happening again in the future. Remember that mistakes provide valuable opportunities to learn and improve.
+
+## Don't judge me on my Instant messages
+"Over slack, I am literally trying to use the least amount of words possible to convey my ideas. I am brain vomiting all the time. Please don't read too much into my messages or try to interpret what I am trying to say. Just send me a follow up message for clarification or, better yet, set up a google hangout or in-person meeting.
+            </script>
+            <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+            <script>
+                (async function() {
+                    try {
+                        const markdown = (document.getElementById('post-md') || {}).textContent || '';
+                        const html = marked.parse(markdown);
+                        document.getElementById('post').innerHTML = html;
+
+                        if (window.MathJax && window.MathJax.typesetPromise) {
+                            await window.MathJax.typesetPromise();
+                        }
+                    } catch (e) {
+                        document.getElementById('post').innerHTML = '<p>Failed to load post.</p>';
+                    }
+                })();
+            </script>
+        </main>
+    </body>
+</html>
+
+
