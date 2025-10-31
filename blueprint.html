@@ -1,31 +1,33 @@
 <!DOCTYPE html>
 <html>
-    <head>
-        <meta charset="utf-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1">
-        <title>Blueprint</title>
-        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/latex.css@1.1.1/dist/latex.min.css">
-        <link rel="stylesheet" href="styles.css">
-        <script>
-            window.MathJax = {
-                tex: {
-                    inlineMath: [["$","$"], ["\\(","\\)"]],
-                    displayMath: [["$$","$$"], ["\\[","\\]"]]
-                },
-                options: {
-                    skipHtmlTags: ["script","noscript","style","textarea","pre","code"]
-                }
-            };
-        </script>
-        <script defer src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js"></script>
-    </head>
-    <body>
-        <main>
-            <div id="post"></div>
-            <script type="text/markdown" id="post-md">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Blueprint</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/latex.css@1.1.1/dist/latex.min.css">
+    <link rel="stylesheet" href="styles.css">
+    <script>
+        window.MathJax = {
+            tex: {
+                inlineMath: [["$", "$"], ["\\(", "\\)"]],
+                displayMath: [["$$", "$$"], ["\\[", "\\]"]]
+            },
+            options: {
+                skipHtmlTags: ["script", "noscript", "style", "textarea", "pre", "code"]
+            }
+        };
+    </script>
+    <script defer src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js"></script>
+</head>
+
+<body>
+    <main>
+        <div id="post"></div>
+        <script type="text/markdown" id="post-md">
 # Blueprint
 
-July 16, 2023
+*Last updated: July 16, 2023 · 6 min read*
 
 If you're working with me, it's important to know what I value and what I find frustrating. 
 This document will give you a head start in understanding how I operate.
@@ -67,24 +69,23 @@ Making mistakes is a natural part of life, but it's essential to take ownership 
 ## Don't judge me on my Instant messages
 "Over slack, I am literally trying to use the least amount of words possible to convey my ideas. I am brain vomiting all the time. Please don't read too much into my messages or try to interpret what I am trying to say. Just send me a follow up message for clarification or, better yet, set up a google hangout or in-person meeting.
             </script>
-            <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
-            <script>
-                (async function() {
-                    try {
-                        const markdown = (document.getElementById('post-md') || {}).textContent || '';
-                        const html = marked.parse(markdown);
-                        document.getElementById('post').innerHTML = html;
+        <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+        <script>
+            (async function () {
+                try {
+                    const markdown = (document.getElementById('post-md') || {}).textContent || '';
+                    const html = marked.parse(markdown);
+                    document.getElementById('post').innerHTML = html;
 
-                        if (window.MathJax && window.MathJax.typesetPromise) {
-                            await window.MathJax.typesetPromise();
-                        }
-                    } catch (e) {
-                        document.getElementById('post').innerHTML = '<p>Failed to load post.</p>';
+                    if (window.MathJax && window.MathJax.typesetPromise) {
+                        await window.MathJax.typesetPromise();
                     }
-                })();
-            </script>
-        </main>
-    </body>
+                } catch (e) {
+                    document.getElementById('post').innerHTML = '<p>Failed to load post.</p>';
+                }
+            })();
+        </script>
+    </main>
+</body>
+
 </html>
-
-

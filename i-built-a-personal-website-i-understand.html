@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>I built a personal website I understand</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/latex.css@1.1.1/dist/latex.min.css">
+    <link rel="stylesheet" href="styles.css">
+</head>
+
+<body>
+    <main>
+        <div id="post"></div>
+        <script type="text/markdown" id="post-md">
+# I built a personal website I understand
+
+*Last updated: October 2025 · 2 min read*
+
+What would a personal website look like if you started from zero and only added what you actually needed? Dieter Rams said good design is "as little design as possible. Less, but better." I took that literally. No frameworks, no build tools, no complexity I couldn't justify. What's left is one CSS file and some HTML files.
+
+My inspiration came from two places. First, [motherfuckingwebsite.com](https://motherfuckingwebsite.com), which makes a provocative but valid point: HTML doesn't need much help to be readable. The defaults are better than we remember. Second, [nat.org](https://nat.org), which shows that a personal website can be elegant and minimal without sacrificing substance. So I built this. The entire site is plain HTML with a touch of JavaScript to render markdown for blog posts. I'm using [latex.css](https://latex.now.sh) for typography because I like how it looks, and that's my only external dependency beyond [marked.js](https://marked.js.org) for markdown parsing. The whole thing fits in my head. When I want to publish a post, I just create an HTML file and push it to GitHub Pages.
+
+This approach has limitations. There's no RSS feed generation, no automatic index pages, no image optimization. But I don't need those things yet, and when I do, I'll add them in the simplest way possible. This website is a reminder that not everything needs to be complex. Sometimes the best solution is the one you can understand completely. The code is all on GitHub if you want to see how simple it really is.
+            </script>
+        <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+        <script>
+            (async function () {
+                try {
+                    const markdown = (document.getElementById('post-md') || {}).textContent || '';
+                    const html = marked.parse(markdown);
+                    document.getElementById('post').innerHTML = html;
+                } catch (e) {
+                    document.getElementById('post').innerHTML = '<p>Failed to load post.</p>';
+                }
+            })();
+        </script>
+    </main>
+</body>
+
+</html>
