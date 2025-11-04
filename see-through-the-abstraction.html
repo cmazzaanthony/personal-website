@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>See Through the Abstraction: Building a 400-Line Coding Agent</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/latex.css@1.1.1/dist/latex.min.css">
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+    <style>
+        /* Code block styling */
+        pre {
+            background-color: #f6f8fa;
+            border-radius: 6px;
+            padding: 16px;
+            overflow-x: auto;
+            font-size: 14px;
+            line-height: 1.45;
+            margin: 1rem 0;
+        }
+
+        code {
+            font-family: 'SFMono-Regular', Consolas, 'Liberation Mono', Menlo, monospace;
+            font-size: 14px;
+        }
+
+        /* Inline code */
+        p code, li code {
+            background-color: #f6f8fa;
+            padding: 0.2em 0.4em;
+            border-radius: 3px;
+            font-size: 85%;
+        }
+
+        /* Ensure pre code doesn't double-style */
+        pre code {
+            background-color: transparent;
+            padding: 0;
+            border-radius: 0;
+            font-size: 14px;
+        }
+    </style>
+</head>
+<body>
+    <main>
+        <div id="post"></div>
+        <script type="text/markdown" id="post-md">
+# See Through the Abstraction: Building a 400-Line Coding Agent
+
+*Last updated: October 2025 · 8 min read*
+
+<video controls autoplay loop muted playsinline style="width: 100%; max-width: 800px; margin: 1rem 0;">
+  <source src="assets/codey_demo.mov" type="video/mp4">
+  Your browser does not support the video tag.
+</video>
+
+I've been using Claude Code for a while now and continue to be impressed by it. I finally had a chance to understand how it works under the hood. Inspired by Richard Feynman's quote "What I cannot create, I do not understand" and Andrej Karpathy's Zero to Hero series, I set out to build a coding agent from scratch to **see through the abstraction**.
+
+Most agent frameworks are black boxes that make you productive but keep you ignorant. Agent frameworks evolve rapidly, and understanding the fundamentals lets you adapt to changes instead of being left behind.
+
+What you miss behind the magic of most agent frameworks:
+- How does an LLM decide to call a tool vs. respond?
+- What's the actual conversation structure sent to the LLM?
+- How do you prevent infinite loops or crashed tools?
+
+## The Solution: Clear Glass Architecture
+
+Codey is 400 lines of code, few dependencies, four tools, and every decision is visible. What becomes obvious when you can see through the glass:
+- The agentic loop is **just a while loop** with tool dispatch
+- "Memory" is **just a conversation list**: [user → assistant → tool_result → assistant]
+- Tools are **just Python functions** that return dicts
+
+## Example 1: Multi-Step File Search
+
+Let's walk through one complete cycle in Codey using this example: "Please find the file called main.py and read the contents. Show me the main agent loop."
+
+```
+› Please find the file called main.py and read the contents. Show me the main agent loop.
+✅ Done
+• Explored
+  └ list_files: {"path":"."}
+  └ list_files: {"path":"src"}
+  └ list_files: {"path":"src/codey"}
+  └ read_file: {"path":"src/codey/main.py"}
+
+─ Worked for 18s ─
+
+• Found at src/codey/main.py. Here's the main agent loop inside CodeyAgent.chat:
+[... shows the main loop code ...]
+```
+
+**1. User message enters the agent loop**
+```python
+self.conversation.append({"role": "user", "content": user_message})
+```
+
+**2. Agent sends conversation to OpenAI**
+```python
+response = self.client.responses.create(
+    model=self.model,
+    tools=list(DEFAULT_TOOLS),  # Four tools: list_files, read_file, write_file, execute_code
+    input=self.conversation,    # Entire conversation history
+    temperature=1.0,
+)
+```
+
+**3. Agent processes the response**
+```python
+for item in response.output:
+    if item.type == "function_call":
+        tools_used.append(f"{item.name}: {item.arguments}")
+        self._execute_tool(item)  # Execute the tool
+    if item.type == "message":
+        content = item.content[0].text
+        self.conversation.append({"role": "assistant", "content": content})
+```
+
+**4. Tool execution**
+```python
+def _execute_tool(self, item: Any) -> None:
+    # 1. Append function call to conversation
+    self.conversation.append({
+        "type": "function_call",
+        "call_id": item.call_id,
+        "name": item.name,
+        "arguments": item.arguments,
+    })
+
+    # 2. Execute the tool (e.g., read_file, list_files)
+    args = json.loads(item.arguments) if item.arguments else {}
+    handler = DEFAULT_TOOL_HANDLERS.get(item.name)
+    result = handler(**args)  # Calls the actual Python function
+
+    # 3. Append result back to conversation
+    self.conversation.append({
+        "type": "function_call_output",
+        "call_id": item.call_id,
+        "output": json.dumps({item.name: result}),
+    })
+```
+
+**5. Tools are simple Python functions**
+```python
+def read_file(path: str) -> dict[str, Any]:
+    try:
+        with open(path, "r", encoding="utf-8") as f:
+            return {"success": True, "content": f.read(), "path": path}
+    except Exception as e:
+        return {"success": False, "error": str(e)}
+```
+
+**6. Loop continues until assistant responds**
+```python
+# Stop when assistant provides a text message
+if self.conversation[-1].get("role") == "assistant":
+    return self.conversation[-1]["content"], tools_used
+```
+
+In our example, the agent:
+1. Calls `list_files` on "." to explore the directory
+2. Calls `list_files` on "src" → finds "codey" folder
+3. Calls `list_files` on "src/codey" → finds "main.py"
+4. Calls `read_file` on "src/codey/main.py" → gets the code
+5. Returns final message showing the main loop
+
+The conversation list grows like this:
+```
+[developer] → [user] → [function_call] → [function_output] → [function_call] → [function_output] → [assistant]
+```
+
+## Example 2: Code Execution
+
+Codey comes with an `execute_code` tool that can run python code in a subprocess and return the output.
+
+```
+› Write a python file that adds 2 + 3
+✅ Done
+• Explored
+  └ write_file: {"path":"add_two_numbers.py","content":"def main():\n    result = 2 + 3\n    print(result)\n\nif __name__ == \"__main__\":\n    main()\n"}
+  └ execute_code: {"code":"import sys, subprocess...\ncompleted = subprocess.run([sys.executable, 'add_two_numbers.py'], capture_output=True, text=True)\nprint(completed.stdout.strip())","timeout": 30}
+
+─ Worked for 18s ─
+
+• I created add_two_numbers.py with the following content and verified it prints 5:
+[... shows the code ...]
+```
+
+The agent calls two tools:
+1. `write_file` → creates add_two_numbers.py
+2. `execute_code` → runs the file to verify it works
+
+The `execute_code` tool uses subprocess to run Python in isolation:
+```python
+def execute_code(code: str, timeout: int = 30) -> dict[str, Any]:
+    try:
+        result = subprocess.run(
+            [sys.executable, "-c", code],
+            capture_output=True,
+            text=True,
+            timeout=timeout,
+        )
+        return {"success": result.returncode == 0, "output": result.stdout}
+    except subprocess.TimeoutExpired:
+        return {"success": False, "output": f"Execution timed out"}
+```
+
+I am not saying that Codey is better than production frameworks. It has four tools and limited robustness. But it's a great way to **learn the fundamentals** of agentic programming. Codey is fun when you need to debug/understand every step or prototype novel agent patterns.
+
+The key is to **earn your abstractions**. Build it once, then use frameworks wisely. Clear glass codebases are learning force multipliers. Understanding isn't reading documentation, it's **recreating from first principles**.
+        </script>
+        <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+        <script>
+            (async function() {
+                try {
+                    const markdown = (document.getElementById('post-md') || {}).textContent || '';
+                    const html = marked.parse(markdown);
+                    document.getElementById('post').innerHTML = html;
+                    // Apply syntax highlighting to all code blocks
+                    document.querySelectorAll('pre code').forEach((block) => {
+                        hljs.highlightElement(block);
+                    });
+                } catch (e) {
+                    document.getElementById('post').innerHTML = '<p>Failed to load post.</p>';
+                }
+            })();
+        </script>
+    </main>
+</body>
+</html>
