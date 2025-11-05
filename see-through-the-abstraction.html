@@ -66,7 +66,7 @@ What you miss behind the magic of most agent frameworks:
 
 ## The Solution: Clear Glass Architecture
 
-Codey is 400 lines of code, few dependencies, four tools, and every decision is visible. What becomes obvious when you can see through the glass:
+[Codey](https://github.com/cmazzaanthony/codey) is 400 lines of code, few dependencies, four tools, and every decision is visible. What becomes obvious when you can see through the glass:
 - The agentic loop is **just a while loop** with tool dispatch
 - "Memory" is **just a conversation list**: [user → assistant → tool_result → assistant]
 - Tools are **just Python functions** that return dicts
@@ -208,6 +208,10 @@ def execute_code(code: str, timeout: int = 30) -> dict[str, Any]:
 I am not saying that Codey is better than production frameworks. It has four tools and limited robustness. But it's a great way to **learn the fundamentals** of agentic programming. Codey is fun when you need to debug/understand every step or prototype novel agent patterns.
 
 The key is to **earn your abstractions**. Build it once, then use frameworks wisely. Clear glass codebases are learning force multipliers. Understanding isn't reading documentation, it's **recreating from first principles**.
+
+---
+
+Check out the [GitHub repo here](https://github.com/cmazzaanthony/codey) to explore the full implementation.
         </script>
         <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
         <script>
